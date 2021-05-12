@@ -67,14 +67,14 @@ const sketch = (p) => {
       p.image(sourceImage, 0, 0);
     } else {
       p.image(renderedNNImage, 0, 0);
-      drawVoronoi();
-      if (drawDelaunayState) drawDelaunay();
       if (drawTestInsertState) testInsert(p.mouseX, p.mouseY);
       if (renderingNNState) createNNInterpolation(1);
     }
+    drawVoronoi();
+    if (drawDelaunayState) drawDelaunay();
   };
 
-  p.mouseClicked = function () {
+  p.mouseReleased = function () {
     if (editModeState) pickPointFromImage(p.mouseX, p.mouseY);
   };
 
@@ -265,6 +265,8 @@ const sketch = (p) => {
   }
 
   function iterativeSubdivision() {
+    console.log("starting iterative subdivision");
+
     const tPreIterSubdiv = performance.now();
 
     let currentHighRatio = 100;
@@ -419,8 +421,6 @@ const sketch = (p) => {
         let rDelaunay = Delaunay.from(removalPoints);
         let rVoronoi = rDelaunay.voronoi(bounds);
 
-        //TODO:
-        //find colour at location colPoints[i][0], colPoints[i][1]
         let removalColor = naturalNeighborInterpolate(
           colPoints[i][0],
           colPoints[i][1],
@@ -642,6 +642,8 @@ const sketch = (p) => {
 
     //add to colPoints, with key point = true
     colPoints.push([finalX, finalY, pickedLinearColor, true]);
+
+    calculateDelaunay();
   }
 
   function randomPoints(w, h, count) {
